@@ -4,6 +4,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,29 +68,23 @@ public class FileHandling {
 	}
 
 	public void DeleteFile(String projectName) throws IOException {
-		boolean isReadyToWrite = false;
 		List<String> newProjectsArray = new ArrayList<String>(Arrays.asList(projectsArray));
-
-		for(int i = 0; i < projectsArray.length - 1; i++) {
-			if(Arrays.asList(projectsArray[i]).contains(">" + projectName)) {
-				isReadyToWrite = true;
-
-				if(isReadyToWrite) {
-					projectsArray[i] = String.format("");
-					projectsArray[i+1] = String.format("");
-					projectsArray[i+2] = String.format("");
-					isReadyToWrite = false;
-					
-					newProjectsArray.remove(i);
-					newProjectsArray.remove(i+1);
-					newProjectsArray.remove(newProjectsArray.size() - 1);
-				}
+		Iterator<String> iterate = newProjectsArray.iterator();
+		
+		while(iterate.hasNext()) {
+			if(newProjectsArray.contains(">" + projectName)) {
+				iterate.next();
+				iterate.remove();
+				iterate.next();
+				iterate.remove();
+				iterate.next();
+				iterate.remove();
 			}
 		}
 
 		int loopCounter = 0;
-
 		BufferedWriter newBuffWriter;
+		
 		try {
 			newBuffWriter = new BufferedWriter(new FileWriter("projects.txt", false));
 			for (String writeToFile : newProjectsArray) {
